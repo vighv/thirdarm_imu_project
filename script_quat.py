@@ -28,6 +28,8 @@ def svr():
         scores = cross_val_score(clf, X, y[:, i], cv=10, n_jobs=-1)
         print(np.mean(scores), np.std(scores))
     clf = SVR()
+
+    print 'RBF SVM'
     for i in range(y.shape[1]):
         scores = cross_val_score(clf, X, y[:, i], cv=10, n_jobs=-1)
         print(np.mean(scores), np.std(scores))
@@ -52,5 +54,5 @@ def mlp():
         print(np.mean(scores), np.std(scores))
 
 if __name__ == '__main__':
-    mlp()
-    #svr()
+    #mlp()
+    svr()
