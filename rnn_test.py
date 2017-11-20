@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 from constants import *
+import matplotlib.pyplot as plt
 
 class MediumConfig(object):
     """Medium config."""
@@ -76,10 +77,16 @@ def init_rnn():
 
 
 def train_rnn():
-    X = np.genfromtxt(X_FILE, delimiter=',')
-    y = np.genfromtxt(Y_FILE, delimiter=',')
     config = MediumConfig()
+    X = np.genfromtxt(X_FILE, delimiter=',')
+    # X = X.reshape((config.batch_size, config.num_steps, :))
+    y = np.genfromtxt(Y_FILE, delimiter=',')
+    y = y.reshape((y.batch_size, y.num_steps))
     model = RNN(X, y, config)
+    session = tf.Session()
+    summary = tf.summary.merge_all()
+    writer = tf.train.summary.FileWriter("logs", session.graph)
+    session.run(tf.initialize_all_variables())
 
 
 
