@@ -4,16 +4,32 @@ from sklearn.neural_network import MLPRegressor
 from sklearn import preprocessing
 import numpy as np
 from sklearn.decomposition import PCA
+import random
 
 XFILE = 'data/imu_proc17-Oct-2017.csv'
 YFILE = 'data/vicon_proc17-Oct-2017.csv'
 
 
-def mlp():
+def shuffled_data():
     X = preprocessing.scale(np.genfromtxt(XFILE, delimiter=','))
     y = preprocessing.scale(np.genfromtxt(YFILE, delimiter=','))
-    clf = MLPRegressor(max_iter=500, hidden_layer_sizes=10, alpha=10)
+    merge = np.concatenate((X, y), 1)
+    np.random.shuffle(merge)
+    X = merge[:, :X.shape[1]]
+    y = merge[:, X.shape[1]:]
+    return X, y
+
+
+def mlp():
+    X, y = shuffled_data()
+    clf = MLPRegressor(30, max_iter=500, alpha=10)
     print('=== MLP ===')
+    kfold(clf, X, y)
+
+
+def svr():
+    X, y = shuffled_data()
+    clf = SVR()
     kfold(clf, X, y)
 
 
@@ -57,10 +73,11 @@ def kfold(clf, X, y):
         scores = cross_val_score(clf, X, y[:, i], cv=10, n_jobs=-1)
         mean.append(np.mean(scores))
         std.append(np.std(scores))
-    print('\t'.join(map(str, mean)))
-    # print('\t'.join(map(str, std)))
+    print('\t'.join(map(str, mean)) + '\t' + str(sum(mean)))
+    print('\t'.join(map(str, std)))
 
 
 if __name__ == '__main__':
     mlp()
     # svr_pca()
+    # svr()
