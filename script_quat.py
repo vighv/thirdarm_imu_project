@@ -132,4 +132,4 @@ if __name__ == '__main__':
     #svr()
     #knn()
     #ridge()
-    TSCV(5)
+    TSCV(10)

@@ -1,5 +1,5 @@
 import numpy as np
-import pandas as pd
+#import pandas as pd
 from constants import *
 from keras.models import Sequential
 from keras.layers.recurrent import LSTM
@@ -10,7 +10,8 @@ BATCH_START = 0
 TIME_STEPS = 30
 BATCH_SIZE = 40
 HIDDEN_SIZE = 100
-
+XFILE = 'data/imu_proc09-Nov-2017.csv'
+YFILE = 'data/vicon_proc09-Nov-2017.csv'
 
 def load_data(x_file, y_file, n_steps):
     X = np.genfromtxt(x_file, delimiter=',')
@@ -46,8 +47,8 @@ def keras_rnn():
     predicted = model.predict(X_test)
     rmse = np.sqrt(((predicted - y_test) ** 2).mean(axis=0))
     r2 = r2_score(y_test, predicted)
-    print(predicted)
-    print(rmse)
+    #print(predicted)
+    #print(rmse)
     print(r2)
 
 

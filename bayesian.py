@@ -6,8 +6,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import r2_score
 from sklearn.neural_network import MLPRegressor
 
-XFILE = 'data/imu_proc17-Oct-2017.csv'
-YFILE = 'data/vicon_proc17-Oct-2017.csv'
+XFILE = 'data/imu_proc01-Feb-2018.csv'
+YFILE = 'data/vicon_proc01-Feb-2018.csv'
 TRAIN_SIZE = 0.9
 CROSS_VAL = 10
 
@@ -21,6 +21,7 @@ svr = SVR()
 bayesian = BayesianRidge()
 models = [bayesian, mlp, svr]
 names = ['Bayesian', 'MLP', 'SVM']
+
 for m, clf in enumerate(models):
     for _ in range(CROSS_VAL):
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
