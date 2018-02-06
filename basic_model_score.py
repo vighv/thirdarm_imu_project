@@ -24,11 +24,12 @@ def pairwise_plot(pred, X_test, y_test):
 if __name__ == '__main__':
     mlp = MLPRegressor(20, max_iter=500, alpha=10)
     svr = SVR()
+    svr_opt = SVR(gamma=0.1, C=10)
     svr_lin = SVR(kernel='linear')
     svr_poly = SVR(kernel='poly')
     bayesian = BayesianRidge()
-    models = [svr, svr_lin, svr_poly, bayesian, mlp]
-    names = ['SVM-RBF', 'SVM-linear', 'SVM-poly', 'Bayesian', 'MLP']
+    models = [svr, svr_opt, svr_lin, svr_poly, bayesian, mlp]
+    names = ['SVM-RBF', 'SVM-optimized', 'SVM-linear', 'SVM-poly', 'Bayesian', 'MLP']
     for m, clf in enumerate(models):
         # cross-validation
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
