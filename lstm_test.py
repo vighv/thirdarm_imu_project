@@ -14,8 +14,8 @@ import matplotlib.pyplot as plt
 from sklearn.metrics import r2_score
 
 BATCH_START = 0
-TIME_STEPS = 20
-BATCH_SIZE = 40
+TIME_STEPS = 100
+BATCH_SIZE = 200
 CELL_SIZE = 10
 ROWS = BATCH_SIZE * TIME_STEPS
 LR = 0.006

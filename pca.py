@@ -6,8 +6,10 @@ import numpy as np
 from sklearn.decomposition import PCA
 import random
 
-XFILE = 'data/imu_proc17-Oct-2017.csv'
-YFILE = 'data/vicon_proc17-Oct-2017.csv'
+# XFILE = 'data/imu_proc17-Oct-2017.csv'
+# YFILE = 'data/vicon_proc17-Oct-2017.csv'
+XFILE = 'data/imu_proc09-Nov-2017.csv'
+YFILE = 'data/vicon_proc09-Nov-2017.csv'
 
 
 def shuffled_data():
@@ -30,6 +32,7 @@ def mlp():
 def svr():
     X, y = shuffled_data()
     clf = SVR()
+    print('=== SVM ===')
     kfold(clf, X, y)
 
 
@@ -80,4 +83,4 @@ def kfold(clf, X, y):
 if __name__ == '__main__':
     mlp()
     # svr_pca()
-    # svr()
+    svr()
