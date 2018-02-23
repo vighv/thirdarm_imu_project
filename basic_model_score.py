@@ -11,6 +11,11 @@ XFILE = 'data/imu_proc01-Feb-2018.csv'
 YFILE = 'data/vicon_proc01-Feb-2018.csv'
 
 X = np.genfromtxt(XFILE, delimiter=',')
+X = X[:, :10]  # arm only
+# X = X[:, 10:]  # wrist only
+# X = np.hstack((X[:, :4], X[:, 10:14]))  # angle only
+# X = np.hstack((X[:, 4:7], X[:, 14:17]))  # velocity only
+# X = np.hstack((X[:, 7:10], X[:, 17:]))  # acceleration only
 y = np.genfromtxt(YFILE, delimiter=',')
 
 
@@ -22,14 +27,11 @@ def pairwise_plot(pred, X_test, y_test):
 
 
 if __name__ == '__main__':
-    mlp = MLPRegressor(20, max_iter=500, alpha=10)
-    svr = SVR()
-    svr_opt = SVR(gamma=0.1, C=10)
-    svr_lin = SVR(kernel='linear')
-    svr_poly = SVR(kernel='poly')
-    bayesian = BayesianRidge()
-    models = [svr, svr_opt, svr_lin, svr_poly, bayesian, mlp]
-    names = ['SVM-RBF', 'SVM-optimized', 'SVM-linear', 'SVM-poly', 'Bayesian', 'MLP']
+    mlp = MLPRegressor(200, 'tanh', max_iter=1400, alpha=0.001)
+    svr_opt = SVR(gamma=0.1, C=100)
+    bayesian = BayesianRidge(alpha_1=1e-04, alpha_2=1e-07, lambda_1=1e-08, lambda_2=1e-04)
+    models = [svr_opt, bayesian, mlp]
+    names = ['SVM-RBF', 'Bayesian', 'MLP']
     for m, clf in enumerate(models):
         # cross-validation
         X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
@@ -39,15 +41,17 @@ if __name__ == '__main__':
         r2_valid = []
         rmse_valid = []
 
-        for yd in range(y_train.shape[1]):
-            y_1d = y_train[:, yd]
-            score = np.mean(cross_val_score(clf, X_train, y_1d, scoring='r2', cv=10, n_jobs=-1))
-            r2_valid.append(score)
-            score = np.mean(cross_val_score(clf, X_train, y_1d, scoring='neg_mean_squared_error', cv=10, n_jobs=-1))
-            rmse_valid.append(score)
+        # for yd in range(y_train.shape[1]):
+        #     y_1d = y_train[:, yd]
+        #     score = np.mean(cross_val_score(clf, X_train, y_1d, scoring='r2', cv=10, n_jobs=-1))
+        #     r2_valid.append(score)
+        #     score = np.mean(cross_val_score(clf, X_train, y_1d, scoring='neg_mean_squared_error', cv=10, n_jobs=-1))
+        #     rmse_valid.append(score)
 
+        # Obtain test accuracy
         r2_test = []
         rmse_test = []
+        rmse_indiv = []
         for yd in range(y_test.shape[1]):
             y_1d = y_test[:, yd]
             clf.fit(X_train, y_train[:, yd])

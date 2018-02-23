@@ -3,17 +3,18 @@ from constants import *
 from keras.models import Sequential
 from keras.layers.recurrent import LSTM
 from keras.layers.core import Dense, Activation
-from sklearn.metrics import r2_score
-from sklearn.metrics import mean_squared_error
+from sklearn.metrics import r2_score, mean_squared_error
 import math
-from sklearn import preprocessing
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
 import matplotlib.pyplot as plt
 
 TIME_STEPS = 100
 BATCH_SIZE = 100
 HIDDEN_SIZE = 30
 EPOCH = 200
-
+XFILE = 'data/imu_proc01-Feb-2018.csv'
+YFILE = 'data/vicon_proc01-Feb-2018.csv'
 
 def load_data():
     X = np.genfromtxt(X_FILE, delimiter=',')
@@ -21,16 +22,6 @@ def load_data():
     # X = [[i, math.sin(0.01 * i)] for i in range(2000)]
     # y = [[i, math.cos(0.01 * i)] for i in range(2000)]
     return X, y
-
-
-def train_test_split(X, y, test_size=0.3):
-    train_size = round(len(X) * (1 - test_size))
-    minmax = preprocessing.MinMaxScaler((-1, 1))
-    X_train = minmax.fit_transform(X[:train_size])
-    X_test = minmax.fit_transform(X[train_size:])
-    y_train = minmax.fit_transform(y[:train_size])
-    y_test = minmax.fit_transform(y[train_size:])
-    return X_train, y_train, X_test, y_test
 
 
 def get_seq_data(X, y):
@@ -42,9 +33,7 @@ def get_seq_data(X, y):
     return np.array(seqX), np.array(seqY)
 
 
-def keras_rnn():
-    X, y = load_data()
-    X_train, y_train, X_test, y_test = train_test_split(X, y)
+def keras_rnn(X_train, y_train, X_test, y_test):
     X_train, y_train = get_seq_data(X_train, y_train)
     X_test, y_test = get_seq_data(X_test, y_test)
     IN_SIZE = X_train.shape[-1]
@@ -68,4 +57,10 @@ def keras_rnn():
 
 
 if __name__ == '__main__':
-    keras_rnn()
+    X = np.genfromtxt(XFILE, delimiter=',')
+    y = np.genfromtxt(YFILE, delimiter=',')
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
+    scaler = StandardScaler().fit(X_train)
+    X_train = scaler.transform(X_train)
+    X_test = scaler.transform(X_test)
+    keras_rnn(X_train, y_train, X_test, y_test)
